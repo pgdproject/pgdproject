@@ -1,12 +1,730 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Page Title</title>
+    <base target="_self">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare BD - Find Doctors & Book Appointments</title>
+    <meta name="description" content="Book appointments with top doctors and hospitals in Bangladesh. Find specialists, check availability, and schedule visits online.">
+    <meta name="keywords" content="Bangladesh doctors, hospital appointment, diagnostic center, physician directory, medical specialist, Dhaka doctors, Chittagong doctors">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3b82f6",
+                        secondary: "#1d4ed8",
+                        accent: "#10b981",
+                        dark: "#1e293b",
+                        light: "#f8fafc"
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(16, 185, 129, 0.8) 100%);
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .chatbot-toggle {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
 </head>
-<body>
+<body class="font-sans text-gray-800 bg-gray-50">
+    <!-- Header/Navigation -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <nav class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <a href="#home" class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xl">M</div>
+                        <span class="ml-3 text-xl font-bold text-dark">MediCare<span class="text-primary">BD</span></span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <ul id="main-nav" class="flex space-x-6"></ul>
+                    <div class="flex space-x-4">
+                        <a href="#appointment" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-md font-medium transition">Book Appointment</a>
+                        <a href="#login" class="border border-primary text-primary hover:bg-primary hover:text-white px-4 py-2 rounded-md font-medium transition">Login</a>
+                    </div>
+                </div>
+                <button class="md:hidden text-gray-600 focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
 
-<h1>This is a Heading</h1>
-<p>This is a paragraph.</p>
+    <!-- Mobile Menu (Hidden by default) -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg">
+        <ul id="mobile-nav" class="py-2 px-4"></ul>
+        <div class="px-4 py-3 border-t border-gray-200">
+            <a href="#appointment" class="block bg-primary text-white text-center py-2 rounded-md font-medium mb-2">Book Appointment</a>
+            <a href="#login" class="block border border-primary text-primary text-center py-2 rounded-md font-medium">Login</a>
+        </div>
+    </div>
 
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="hero-gradient text-white py-16 md:py-24">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/2 mb-8 md:mb-0">
+                        <h1 class="text-4xl md:text-5xl font-bold mb-4">Find the Right Doctor in Bangladesh</h1>
+                        <p class="text-xl mb-8">Book appointments with top specialists and hospitals. Fast, easy, and reliable healthcare access.</p>
+                        <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                            <a href="#appointment" class="bg-white text-primary hover:bg-gray-100 px-6 py-3 rounded-md font-bold text-center">Book Now</a>
+                            <a href="#doctors" class="border-2 border-white hover:bg-white hover:text-primary px-6 py-3 rounded-md font-bold text-center">Find Doctors</a>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 flex justify-center">
+                        <img src="https://picsum.photos/600/400?random=101" alt="Doctor consultation" class="rounded-lg shadow-xl w-full max-w-md">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Bar -->
+        <section class="bg-white py-8 shadow-sm -mt-8 relative z-10 mx-4 rounded-lg">
+            <div class="container mx-auto px-4">
+                <div class="bg-white p-4 rounded-lg shadow-md">
+                    <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+                        <div class="flex-1">
+                            <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search Doctors</label>
+                            <div class="relative">
+                                <input type="text" id="search" placeholder="Doctor name, specialty or hospital" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-primary focus:border-primary">
+                                <button class="absolute right-2 top-2 text-gray-400 hover:text-primary">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                            <select id="location" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-primary focus:border-primary">
+                                <option value="">All Bangladesh</option>
+                                <option value="dhaka">Dhaka</option>
+                                <option value="chittagong">Chittagong</option>
+                                <option value="sylhet">Sylhet</option>
+                                <option value="khulna">Khulna</option>
+                                <option value="rajshahi">Rajshahi</option>
+                            </select>
+                        </div>
+                        <div class="flex-1">
+                            <label for="specialty" class="block text-sm font-medium text-gray-700 mb-1">Specialty</label>
+                            <select id="specialty" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-primary focus:border-primary">
+                                <option value="">All Specialties</option>
+                                <option value="cardiology">Cardiology</option>
+                                <option value="neurology">Neurology</option>
+                                <option value="orthopedics">Orthopedics</option>
+                                <option value="pediatrics">Pediatrics</option>
+                                <option value="dermatology">Dermatology</option>
+                            </select>
+                        </div>
+                        <div class="self-end">
+                            <button class="bg-primary hover:bg-secondary text-white px-6 py-3 rounded-md font-medium">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Specialties Section -->
+        <section class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-4">Medical Specialties</h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">Find doctors by their area of specialization</p>
+                </div>
+                <div id="specialty-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
+                <div class="text-center mt-8">
+                    <a href="#specialties" class="text-primary hover:text-secondary font-medium">View All Specialties <i class="fas fa-arrow-right ml-1"></i></a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Doctors -->
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold mb-2">Featured Doctors</h2>
+                        <p class="text-gray-600">Top rated specialists available for appointments</p>
+                    </div>
+                    <a href="#doctors" class="text-primary hover:text-secondary font-medium">View All Doctors <i class="fas fa-arrow-right ml-1"></i></a>
+                </div>
+                <div id="featured-doctors" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+            </div>
+        </section>
+
+        <!-- Top Hospitals -->
+        <section class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold mb-2">Top Hospitals & Diagnostic Centers</h2>
+                        <p class="text-gray-600">Reputed healthcare facilities in Bangladesh</p>
+                    </div>
+                    <a href="#hospitals" class="text-primary hover:text-secondary font-medium">View All <i class="fas fa-arrow-right ml-1"></i></a>
+                </div>
+                <div id="hospitals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-4">Patient Experiences</h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">What our patients say about their healthcare journey</p>
+                </div>
+                <div id="testimonials" class="grid grid-cols-1 md:grid-cols-3 gap-8"></div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">Find answers to common questions about our services</p>
+                </div>
+                <div id="faq-accordion" class="max-w-3xl mx-auto"></div>
+                <div class="text-center mt-8">
+                    <a href="#support" class="text-primary hover:text-secondary font-medium">More Questions? Contact Support <i class="fas fa-arrow-right ml-1"></i></a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Helpline CTA -->
+        <section class="py-16 bg-primary text-white">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-6 md:mb-0">
+                        <h2 class="text-3xl font-bold mb-2">Need Immediate Assistance?</h2>
+                        <p class="text-lg">Our 24/7 helpline is ready to support you</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <a href="tel:+8801700000000" class="bg-white text-primary hover:bg-gray-100 px-8 py-4 rounded-md font-bold text-center text-xl">
+                            <i class="fas fa-phone-alt mr-2"></i> 01700-000000
+                        </a>
+                        <a href="#support" class="border-2 border-white hover:bg-white hover:text-primary px-8 py-4 rounded-md font-bold text-center text-xl">
+                            <i class="fas fa-headset mr-2"></i> Live Chat
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white pt-16 pb-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">MediCare<span class="text-primary">BD</span></h3>
+                    <p class="mb-4 text-gray-300">Your trusted healthcare partner in Bangladesh. Connecting patients with the best medical professionals.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-lg">Quick Links</h4>
+                    <ul id="footer-links-1" class="space-y-2"></ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-lg">Services</h4>
+                    <ul id="footer-links-2" class="space-y-2"></ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-lg">Contact Us</h4>
+                    <ul id="footer-contact" class="space-y-3"></ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 mb-4 md:mb-0">© 2023 MediCareBD. All rights reserved.</p>
+                <div class="flex space-x-6">
+                    <a href="#privacy" class="text-gray-400 hover:text-white">Privacy Policy</a>
+                    <a href="#terms" class="text-gray-400 hover:text-white">Terms of Service</a>
+                    <a href="#sitemap" class="text-gray-400 hover:text-white">Sitemap</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Chatbot -->
+    <div id="chatbot-container" class="fixed bottom-6 right-6 z-50">
+        <div id="chatbot-toggle" class="bg-primary text-white rounded-full w-16 h-16 flex items-center justify-center cursor-pointer shadow-lg chatbot-toggle">
+            <i class="fas fa-comment-dots text-2xl"></i>
+        </div>
+        <div id="chatbot-window" class="hidden absolute bottom-20 right-0 w-80 bg-white rounded-lg shadow-xl overflow-hidden">
+            <div class="bg-primary text-white p-4 flex justify-between items-center">
+                <h3 class="font-bold">MediCare Assistant</h3>
+                <button id="chatbot-close" class="text-white hover:text-gray-200">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="chatbot-messages" class="p-4 h-60 overflow-y-auto">
+                <div class="mb-4">
+                    <div class="bg-gray-100 rounded-lg p-3 inline-block max-w-xs">
+                        <p>Hello! I'm your MediCare assistant. How can I help you today?</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-gray-200">
+                <div class="flex">
+                    <input type="text" placeholder="Type your question..." class="flex-1 border border-gray-300 rounded-l-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary">
+                    <button class="bg-primary text-white px-4 rounded-r-md hover:bg-secondary">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="mt-2 text-xs text-gray-500">
+                    <p>Try: "How do I book an appointment?" or "Find cardiologists in Dhaka"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Layer - All content data
+        const navigationItems = [
+            { "label": "Home", "href": "#home" },
+            { "label": "Doctors", "href": "#doctors" },
+            { "label": "Hospitals", "href": "#hospitals" },
+            { "label": "Specialties", "href": "#specialties" },
+            { "label": "Appointment", "href": "#appointment" },
+            { "label": "About", "href": "#about" },
+            { "label": "Contact", "href": "#contact" }
+        ];
+
+        const specialties = [
+            { "name": "Cardiology", "icon": "heartbeat", "count": "42 Doctors" },
+            { "name": "Neurology", "icon": "brain", "count": "28 Doctors" },
+            { "name": "Orthopedics", "icon": "bone", "count": "35 Doctors" },
+            { "name": "Pediatrics", "icon": "baby-carriage", "count": "39 Doctors" },
+            { "name": "Dermatology", "icon": "allergies", "count": "24 Doctors" },
+            { "name": "Gynecology", "icon": "female", "count": "31 Doctors" },
+            { "name": "Gastroenterology", "icon": "stomach", "count": "22 Doctors" },
+            { "name": "Ophthalmology", "icon": "eye", "count": "19 Doctors" },
+            { "name": "ENT", "icon": "ear", "count": "17 Doctors" },
+            { "name": "Dentistry", "icon": "tooth", "count": "26 Doctors" },
+            { "name": "Urology", "icon": "procedures", "count": "15 Doctors" },
+            { "name": "Psychiatry", "icon": "head-side-mask", "count": "21 Doctors" }
+        ];
+
+        const doctors = [
+            {
+                "id": 1,
+                "name": "Dr. Ayesha Rahman",
+                "specialty": "Cardiology",
+                "hospital": "Square Hospital",
+                "location": "Dhaka",
+                "rating": 4.9,
+                "reviews": 128,
+                "fee": 1500,
+                "image": "https://picsum.photos/200?random=1",
+                "alt": "Dr. Ayesha Rahman"
+            },
+            {
+                "id": 2,
+                "name": "Dr. Farid Ahmed",
+                "specialty": "Neurology",
+                "hospital": "Apollo Hospitals",
+                "location": "Dhaka",
+                "rating": 4.8,
+                "reviews": 95,
+                "fee": 1800,
+                "image": "https://picsum.photos/200?random=2",
+                "alt": "Dr. Farid Ahmed"
+            },
+            {
+                "id": 3,
+                "name": "Dr. Nusrat Jahan",
+                "specialty": "Pediatrics",
+                "hospital": "United Hospital",
+                "location": "Dhaka",
+                "rating": 4.7,
+                "reviews": 112,
+                "fee": 1200,
+                "image": "https://picsum.photos/200?random=3",
+                "alt": "Dr. Nusrat Jahan"
+            },
+            {
+                "id": 4,
+                "name": "Dr. Kamal Hossain",
+                "specialty": "Orthopedics",
+                "hospital": "Labaid Hospital",
+                "location": "Dhaka",
+                "rating": 4.6,
+                "reviews": 87,
+                "fee": 1600,
+                "image": "https://picsum.photos/200?random=4",
+                "alt": "Dr. Kamal Hossain"
+            },
+            {
+                "id": 5,
+                "name": "Dr. Sabrina Akter",
+                "specialty": "Dermatology",
+                "hospital": "Popular Hospital",
+                "location": "Dhaka",
+                "rating": 4.5,
+                "reviews": 76,
+                "fee": 1300,
+                "image": "https://picsum.photos/200?random=5",
+                "alt": "Dr. Sabrina Akter"
+            },
+            {
+                "id": 6,
+                "name": "Dr. Arif Khan",
+                "specialty": "Gastroenterology",
+                "hospital": "Ibn Sina Hospital",
+                "location": "Dhaka",
+                "rating": 4.7,
+                "reviews": 64,
+                "fee": 1700,
+                "image": "https://picsum.photos/200?random=6",
+                "alt": "Dr. Arif Khan"
+            },
+            {
+                "id": 7,
+                "name": "Dr. Tahmina Begum",
+                "specialty": "Gynecology",
+                "hospital": "Central Hospital",
+                "location": "Dhaka",
+                "rating": 4.8,
+                "reviews": 92,
+                "fee": 1400,
+                "image": "https://picsum.photos/200?random=7",
+                "alt": "Dr. Tahmina Begum"
+            },
+            {
+                "id": 8,
+                "name": "Dr. Rashedul Islam",
+                "specialty": "Ophthalmology",
+                "hospital": "Eye Foundation",
+                "location": "Dhaka",
+                "rating": 4.6,
+                "reviews": 58,
+                "fee": 1100,
+                "image": "https://picsum.photos/200?random=8",
+                "alt": "Dr. Rashedul Islam"
+            }
+        ];
+
+        const hospitals = [
+            {
+                "name": "Square Hospital",
+                "location": "Dhaka",
+                "rating": 4.8,
+                "specialties": ["Cardiology", "Neurology", "Surgery"],
+                "image": "https://picsum.photos/400/300?random=11",
+                "alt": "Square Hospital building"
+            },
+            {
+                "name": "Apollo Hospitals",
+                "location": "Dhaka",
+                "rating": 4.7,
+                "specialties": ["Oncology", "Cardiology", "Orthopedics"],
+                "image": "https://picsum.photos/400/300?random=12",
+                "alt": "Apollo Hospitals building"
+            },
+            {
+                "name": "United Hospital",
+                "location": "Dhaka",
+                "rating": 4.6,
+                "specialties": ["Pediatrics", "Gynecology", "ENT"],
+                "image": "https://picsum.photos/400/300?random=13",
+                "alt": "United Hospital building"
+            },
+            {
+                "name": "Labaid Hospital",
+                "location": "Dhaka",
+                "rating": 4.5,
+                "specialties": ["Cardiac Surgery", "Urology", "Dermatology"],
+                "image": "https://picsum.photos/400/300?random=14",
+                "alt": "Labaid Hospital building"
+            },
+            {
+                "name": "Popular Hospital",
+                "location": "Dhaka",
+                "rating": 4.4,
+                "specialties": ["General Medicine", "Pediatrics", "Dentistry"],
+                "image": "https://picsum.photos/400/300?random=15",
+                "alt": "Popular Hospital building"
+            },
+            {
+                "name": "Chittagong Medical College",
+                "location": "Chittagong",
+                "rating": 4.3,
+                "specialties": ["General Surgery", "Medicine", "Pediatrics"],
+                "image": "https://picsum.photos/400/300?random=16",
+                "alt": "Chittagong Medical College building"
+            }
+        ];
+
+        const testimonials = [
+            {
+                "name": "Rahim Khan",
+                "location": "Dhaka",
+                "rating": 5,
+                "text": "Found the perfect cardiologist through MediCareBD. The appointment booking was seamless and the doctor was excellent.",
+                "image": "https://picsum.photos/100?random=21",
+                "alt": "Rahim Khan"
+            },
+            {
+                "name": "Fatema Begum",
+                "location": "Chittagong",
+                "rating": 4,
+                "text": "Very convenient platform to find specialists. Saved me hours of searching and calling different hospitals.",
+                "image": "https://picsum.photos/100?random=22",
+                "alt": "Fatema Begum"
+            },
+            {
+                "name": "Arif Hasan",
+                "location": "Sylhet",
+                "rating": 5,
+                "text": "The doctor directory is comprehensive and the reviews helped me choose the right pediatrician for my child.",
+                "image": "https://picsum.photos/100?random=23",
+                "alt": "Arif Hasan"
+            }
+        ];
+
+        const faqs = [
+            {
+                "question": "How do I book an appointment?",
+                "answer": "You can book appointments by searching for doctors or hospitals, selecting your preferred time slot, and completing the appointment form with your details."
+            },
+            {
+                "question": "Is there any booking fee?",
+                "answer": "No, booking through MediCareBD is completely free. You only pay the doctor's consultation fee at the hospital or clinic."
+            },
+            {
+                "question": "Can I reschedule or cancel an appointment?",
+                "answer": "Yes, you can reschedule or cancel appointments up to 12 hours before the scheduled time through your account dashboard."
+            },
+            {
+                "question": "How do I know if a doctor is available?",
+                "answer": "Each doctor's profile shows their available time slots. Real-time availability is updated based on their schedule."
+            },
+            {
+                "question": "What payment methods are accepted?",
+                "answer": "We accept bKash, Nagad, Rocket, and credit/debit cards for online payments where available. Some hospitals may require payment at the facility."
+            }
+        ];
+
+        const footerLinks1 = [
+            { "label": "Home", "href": "#home" },
+            { "label": "About Us", "href": "#about" },
+            { "label": "Services", "href": "#services" },
+            { "label": "Doctors", "href": "#doctors" },
+            { "label": "Hospitals", "href": "#hospitals" }
+        ];
+
+        const footerLinks2 = [
+            { "label": "Book Appointment", "href": "#appointment" },
+            { "label": "Find Doctors", "href": "#doctors" },
+            { "label": "Health Checkup", "href": "#checkup" },
+            { "label": "Emergency", "href": "#emergency" },
+            { "label": "Support", "href": "#support" }
+        ];
+
+        const footerContact = [
+            { "icon": "map-marker-alt", "text": "123 Medical Road, Dhaka 1205" },
+            { "icon": "phone", "text": "+880 1700-000000" },
+            { "icon": "envelope", "text": "info@medicarebd.com" },
+            { "icon": "clock", "text": "24/7 Support" }
+        ];
+
+        // Reusable Render Functions
+        function renderNavItems(items) {
+            return items.map(item => 
+                `<li><a href="${item.href}" class="text-gray-700 hover:text-primary transition">${item.label}</a></li>`
+            ).join("");
+        }
+
+        function renderSpecialtyCards(items) {
+            return items.slice(0, 6).map(item => 
+                `<div class="bg-white rounded-lg p-4 text-center shadow-sm hover:shadow-md transition cursor-pointer card-hover">
+                    <div class="w-16 h-16 bg-primary bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-${item.icon} text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold mb-1">${item.name}</h3>
+                    <p class="text-sm text-gray-500">${item.count}</p>
+                </div>`
+            ).join("");
+        }
+
+        function renderDoctorCards(items) {
+            return items.map(doctor => 
+                `<div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition cursor-pointer card-hover">
+                    <div class="relative">
+                        <img src="${doctor.image}" alt="${doctor.alt}" class="w-full h-48 object-cover">
+                        <div class="absolute top-2 right-2 bg-white bg-opacity-90 rounded-full px-2 py-1 flex items-center text-sm">
+                            <i class="fas fa-star text-yellow-400 mr-1"></i>
+                            <span>${doctor.rating}</span>
+                            <span class="text-gray-500 ml-1">(${doctor.reviews})</span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg">${doctor.name}</h3>
+                        <p class="text-gray-600 mb-1">${doctor.specialty}</p>
+                        <p class="text-sm text-gray-500 mb-2">
+                            <i class="fas fa-hospital mr-1"></i> ${doctor.hospital}, ${doctor.location}
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-primary">৳${doctor.fee}</span>
+                            <a href="#doctor-${doctor.id}" class="text-sm bg-primary hover:bg-secondary text-white px-3 py-1 rounded">View Profile</a>
+                        </div>
+                    </div>
+                </div>`
+            ).join("");
+        }
+
+        function renderHospitalCards(items) {
+            return items.map(hospital => 
+                `<div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition cursor-pointer card-hover">
+                    <img src="${hospital.image}" alt="${hospital.alt}" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-1">${hospital.name}</h3>
+                        <p class="text-gray-600 mb-2">
+                            <i class="fas fa-map-marker-alt mr-1"></i> ${hospital.location}
+                        </p>
+                        <div class="flex items-center mb-3">
+                            <div class="flex">
+                                ${Array(Math.floor(hospital.rating)).fill('<i class="fas fa-star text-yellow-400"></i>').join('')}
+                                ${hospital.rating % 1 !== 0 ? '<i class="fas fa-star-half-alt text-yellow-400"></i>' : ''}
+                                ${Array(5 - Math.ceil(hospital.rating)).fill('<i class="far fa-star text-yellow-400"></i>').join('')}
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-1 mb-3">
+                            ${hospital.specialties.slice(0, 3).map(spec => 
+                                `<span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">${spec}</span>`
+                            ).join('')}
+                            ${hospital.specialties.length > 3 ? '<span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">+ more</span>' : ''}
+                        </div>
+                        <a href="#hospital-${hospital.name.toLowerCase().replace(' ', '-')}" class="text-sm bg-primary hover:bg-secondary text-white px-3 py-2 rounded block text-center">View Details</a>
+                    </div>
+                </div>`
+            ).join("");
+        }
+
+        function renderTestimonials(items) {
+            return items.map(testimonial => 
+                `<div class="bg-white rounded-lg p-6 shadow-sm">
+                    <div class="flex items-center mb-4">
+                        <img src="${testimonial.image}" alt="${testimonial.alt}" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <h4 class="font-bold">${testimonial.name}</h4>
+                            <p class="text-gray-600 text-sm">${testimonial.location}</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-3">
+                        ${Array(testimonial.rating).fill('<i class="fas fa-star text-yellow-400"></i>').join('')}
+                        ${Array(5 - testimonial.rating).fill('<i class="far fa-star text-yellow-400"></i>').join('')}
+                    </div>
+                    <p class="text-gray-700">"${testimonial.text}"</p>
+                </div>`
+            ).join("");
+        }
+
+        function renderFAQ(items) {
+            return items.map((faq, index) => 
+                `<div class="mb-4 border-b border-gray-200 pb-4">
+                    <button class="faq-question flex justify-between items-center w-full text-left font-medium text-lg focus:outline-none" data-index="${index}">
+                        <span>${faq.question}</span>
+                        <i class="fas fa-chevron-down transition-transform duration-200"></i>
+                    </button>
+                    <div class="faq-answer mt-2 text-gray-600 hidden" data-index="${index}">
+                        <p>${faq.answer}</p>
+                    </div>
+                </div>`
+            ).join("");
+        }
+
+        function renderFooterLinks1(items) {
+            return items.map(item => 
+                `<li><a href="${item.href}" class="text-gray-300 hover:text-white transition">${item.label}</a></li>`
+            ).join("");
+        }
+
+        function renderFooterLinks2(items) {
+            return items.map(item => 
+                `<li><a href="${item.href}" class="text-gray-300 hover:text-white transition">${item.label}</a></li>`
+            ).join("");
+        }
+
+        function renderFooterContact(items) {
+            return items.map(item => 
+                `<li class="flex items-start">
+                    <i class="fas fa-${item.icon} mt-1 mr-3 text-primary"></i>
+                    <span>${item.text}</span>
+                </li>`
+            ).join("");
+        }
+
+        // Initialize Page Content
+        document.getElementById("main-nav").innerHTML = renderNavItems(navigationItems);
+        document.getElementById("mobile-nav").innerHTML = renderNavItems(navigationItems);
+        document.getElementById("specialty-grid").innerHTML = renderSpecialtyCards(specialties);
+        document.getElementById("featured-doctors").innerHTML = renderDoctorCards(doctors);
+        document.getElementById("hospitals-grid").innerHTML = renderHospitalCards(hospitals);
+        document.getElementById("testimonials").innerHTML = renderTestimonials(testimonials);
+        document.getElementById("faq-accordion").innerHTML = renderFAQ(faqs);
+        document.getElementById("footer-links-1").innerHTML = renderFooterLinks1(footerLinks1);
+        document.getElementById("footer-links-2").innerHTML = renderFooterLinks2(footerLinks2);
+        document.getElementById("footer-contact").innerHTML = renderFooterContact(footerContact);
+
+        // Mobile Menu Toggle
+        document.querySelector('button.md\\:hidden').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // FAQ Accordion
+        document.querySelectorAll('.faq-question').forEach(button => {
+            button.addEventListener('click', () => {
+                const index = button.getAttribute('data-index');
+                const answer = document.querySelector(`.faq-answer[data-index="${index}"]`);
+                const icon = button.querySelector('i');
+                
+                answer.classList.toggle('hidden');
+                icon.classList.toggle('rotate-180');
+            });
+        });
+
+        // Chatbot Toggle
+        document.getElementById('chatbot-toggle').addEventListener('click', function() {
+            document.getElementById('chatbot-window').classList.toggle('hidden');
+        });
+
+        document.getElementById('chatbot-close').addEventListener('click', function() {
+            document.getElementById('chatbot-window').classList.add('hidden');
+        });
+
+        // Smooth Scrolling for Anchor Links
+        document.addEventListener('click', function(event) {
+            if (event.target.closest('a[href^="#"]')) {
+                event.preventDefault();
+                const target = document.querySelector(event.target.closest('a').getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        });
+    </script>
 </body>
 </html>
